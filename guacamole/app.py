@@ -1,9 +1,13 @@
-from flask import Flask, render_template
-from flask.ext.socketio import SocketIO, join_room, leave_room
+from flask import Flask, render_template, g
+from flask.ext.socketio import SocketIO, join_room, leave_room, send
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
+
+class Game:
+    """A game, simply!"""
+    started = False
 
 @app.route('/')
 def guacamole():
@@ -11,10 +15,8 @@ def guacamole():
 
 @socketio.on('connect')
 def connect():
-    exit(1)
     app.logger.info('we got a logger!')
     print('we got a logger!')
-    pass
 
 @socketio.on('message')
 def message(message):
@@ -32,13 +34,26 @@ def json(json):
 
 @socketio.on('join')
 def join(data):
-    join_room(data['room'])
-    print('{} has joined the room {}'.format(data, data['room']))
+    room = data['room']
+
+    if not room in g.games:
+        g.games[room] = Game()
+
+    game = g.games[room]
+
+    join_room(room)
+
+    print('{} has joined the game room {}'.format(data['username'], room))
 
 @socketio.on('leave')
-def join(data):
+def leave(data):
+    room = data['room']
+
+    if not room in g.games:
+        return socketio.send('Room {} does not exist.'.format(room))
+
     leave_room(data['room'])
-    print('{} has left the room {}'.format(data, data['room']))
+    print('{username} has left the room {room}'.format(**data))
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0')
