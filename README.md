@@ -9,6 +9,7 @@ states over WebSocket.
 Gettings started
 ----------------
 To start playing in a very few steps:
+
 1. clone the project or just download a zipped release on GitHub ;
 2. start the server with `python guacamole/app.py` ;
 3. open your browser at `http://127.0.0.1:5000` ;
