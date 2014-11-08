@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <title>Get that GUACAMOLE!</title>
+    </head>
+    <body>
+        <script src="{{ url_for('static', filename='socket.io.js') }}"></script>
+        <script>
+            var socket = io.connect('http://localhost:5000');
+            socket.on('connect', function () {
+                    console.log('work');
+                  // socket connected
+            });
+            socket.on('custom event', function () {
+                  // server emitted a custom event
+            });
+            socket.on('disconnect', function () {
+                  // socket disconnected
+            });
+            socket.send('hi there');
+        </script>
+    </body>
+</html>
